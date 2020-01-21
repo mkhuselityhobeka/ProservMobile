@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">ProServ Mobile </string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="login">LOGIN</string>
+    <string name="next">NEXT</string>
+    <string name="studentNumber">Student No</string>
+    <string name="employeeNumber">Employee No</string>
+    <string name="submit">Submit</string>
+    <string name="firstName">First Name</string>
+    <string name="slastName">Last Name</string>
+    <string name="register">REGISTER</string>
+    <string name="register_here">Register Here</string>
+    <string name="student_number">Student no ...</string>
+</resources>
+
+
