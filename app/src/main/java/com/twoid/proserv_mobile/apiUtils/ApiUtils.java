@@ -6,7 +6,7 @@ import com.twoid.proserv_mobile.services.ApiService;
 public class ApiUtils {
 
     //api url
-    private static final String BASE_URL = "http://169.254.208.79:8091/" ;
+    private static final String BASE_URL = " http://41.76.212.32:8090/" ;
 
     public ApiUtils(){ }
 

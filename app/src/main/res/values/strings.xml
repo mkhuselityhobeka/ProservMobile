@@ -5,13 +5,15 @@
     <string name="login">LOGIN</string>
     <string name="next">NEXT</string>
     <string name="studentNumber">Student No</string>
+    <string name="IDNumber">ID Number</string>
+    <string name="Opt_pin">Opt Pin</string>
     <string name="employeeNumber">Employee No</string>
     <string name="submit">Submit</string>
     <string name="firstName">First Name</string>
     <string name="slastName">Last Name</string>
     <string name="register">REGISTER</string>
     <string name="register_here">Register Here</string>
-    <string name="student_number">Student no ...</string>
+    <string name="student_number">Student ID ...</string>
 </resources>
 
 

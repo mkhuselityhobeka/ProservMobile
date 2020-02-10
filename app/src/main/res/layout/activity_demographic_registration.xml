@@ -11,9 +11,9 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="339dp"
-        app:layout_constraintBottom_toTopOf="@+id/employee_no_spinner"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="302dp"
+        app:layout_constraintBottom_toTopOf="@+id/course_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,10 +31,10 @@
         app:errorEnabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintHorizontal_bias="0.448"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.261">
 
         <com.google.android.material.textfield.TextInputEditText
 
@@ -55,7 +55,7 @@
         android:layout_marginTop="4dp"
         app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_layout">
 
@@ -71,7 +71,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <CheckBox
         android:id="@+id/checkbox_facilitator"
         android:layout_width="180dp"
@@ -82,50 +81,57 @@
         app:layout_constraintEnd_toEndOf="@+id/password_layout"
         app:layout_constraintTop_toBottomOf="@+id/password_layout" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/studentNo_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="286dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="4dp"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.464"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_facilitator">
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/student_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/IDNumber"
+            tools:layout_editor_absoluteX="83dp"
+            tools:layout_editor_absoluteY="427dp" />
+
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/registerDemographics"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="175dp"
         android:layout_height="67dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginRight="52dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginBottom="16dp"
 
         android:text="@string/next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/password_layout" />
 
     <Spinner
-        android:id="@+id/student_number_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:prompt="@string/student_number"
-        android:layout_width="0dp"
+        android:id="@+id/course_id"
+        android:layout_width="278dp"
         android:layout_height="72dp"
-        android:layout_marginStart="62dp"
-        android:layout_marginLeft="62dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginBottom="128dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/employee_no_spinner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_layout"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <Spinner
-        android:id="@+id/employee_no_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:prompt="@string/student_number"
-        android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginRight="64dp"
-        android:layout_marginBottom="131dp"
+        android:layout_marginBottom="181dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/student_number_spinner"
-        app:layout_constraintTop_toBottomOf="@+id/password_layout"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

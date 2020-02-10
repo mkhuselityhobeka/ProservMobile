@@ -12,7 +12,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.twoid.proserv_mobile.model.UserRegistration;
+import com.twoid.proserv_mobile.model.LearnerStructure;
+
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class DEMOGRAPHICS_DATABASE extends SQLiteOpenHelper {
 
     public List getAllUsers(){
 
-        List<UserRegistration> list = UserRegistration.listAll(UserRegistration.class);
+        List<LearnerStructure> list = LearnerStructure.listAll(LearnerStructure.class);
 
          return  list;
     }
@@ -53,18 +54,25 @@ public class DEMOGRAPHICS_DATABASE extends SQLiteOpenHelper {
     //compose json from the db
     public String  composeJsonFromDB(){
 
-        List<UserRegistration> list = UserRegistration.find(UserRegistration.class,"SYNC_STATUS=?","0");
-       Gson gson = new GsonBuilder().create();
+        List<LearnerStructure> list = LearnerStructure.find(LearnerStructure.class,"SYNC_STATUS=?","0");
+        Gson gson = new GsonBuilder().create();
 
         return gson.toJson(list);
     }
 
     public String convertToJson(){
+
         String json = composeJsonFromDB();
         String conevrtJson = json.substring(1,json.length()-1);
-
         Gson gson = new GsonBuilder().create();
+
         return gson.toJson(conevrtJson);
+    }
+
+    public  String getAllLearnersToJson(){
+        List<LearnerStructure> list = LearnerStructure.listAll(LearnerStructure.class);
+        Gson gson = new GsonBuilder().create();
+        return  gson.toJson(list);
     }
 //get sync status
     public String getSyncStatus(){
@@ -96,6 +104,7 @@ public class DEMOGRAPHICS_DATABASE extends SQLiteOpenHelper {
 
         return count;
     }
+
 
 
 }

@@ -7,28 +7,41 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.ftransisdk.FrigerprintControl;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.suprema.BioMiniFactory;
 import com.suprema.CaptureResponder;
 import com.suprema.IBioMiniDevice;
 import com.suprema.IUsbEventHandler;
 import com.twoid.proserv_mobile.model.DemographicRegistration;
+import com.twoid.proserv_mobile.model.LearnerStructure;
+import com.twoid.proserv_mobile.model.UsersData;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 public class Main2Activity extends AppCompatActivity {
@@ -38,6 +51,7 @@ public class Main2Activity extends AppCompatActivity {
     private UsbManager mUsbManager = null;
     private PendingIntent mPermissionIntent= null;
     private String loginFinger;
+    boolean isMatched = false;
     private static BioMiniFactory mBioMiniFactory = null;
     public static final int REQUEST_WRITE_PERMISSION = 786;
     public IBioMiniDevice mCurrentDevice = null;
@@ -50,16 +64,13 @@ public class Main2Activity extends AppCompatActivity {
     private String TAG__onCaptureSuccess= "onCaptureSuccess";
     private String TAG__isMatch= "isMatch";
 
-    class UserData{
-        byte[] template;
+    private TextInputEditText otpTextInputEditText;
 
-        public UserData(byte[] template) {
-            this.template = template;
-        }
-    }
 
-    private ArrayList<UserData>mUsers = new ArrayList<>();
+    private List<UsersData>mUsersMatch = new ArrayList<>();
     private IBioMiniDevice.CaptureOption mCaptureOptionDefault = new IBioMiniDevice.CaptureOption();
+
+
 
     private CaptureResponder mCaptureResponseDefault = new CaptureResponder() {
 
@@ -79,39 +90,34 @@ public class Main2Activity extends AppCompatActivity {
                             imageView.setImageBitmap(capturedImage);
                         }
                     }
+
+                    IBioMiniDevice.TemplateData cpTemplate = mCurrentDevice.extractTemplate();
+                    if (cpTemplate != null){
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("templates",MODE_PRIVATE);
+                        Gson gson = new Gson();
+                        String jsonPref = sharedPreferences.getString("jsontemplates",null);
+                        if (jsonPref != null){
+                            Type type =  new TypeToken<List<UsersData>>(){}.getType();
+                            List<UsersData> usersData = gson.fromJson(jsonPref,type);
+                            String TAG_LIST = "lIST";
+                            Log.i(TAG_LIST,"LIST IS " + usersData);
+                            for (UsersData datas : usersData){
+                                if (mCurrentDevice.verify(cpTemplate.data,cpTemplate.data.length,
+                                        datas.getTemplate(),datas.getTemplate().length)){
+                                    isMatched = true;
+                                }
+                           }
+                        }else {
+
+
+
+                        }
+                    }
                 }
             });
 
-            try{
-                   Log.i(TAG_mCurrentDevice, "INSIDE TRY BLOCK");
-                    byte[] rawImage = mCurrentDevice.getCaptureImageAsWsq(512, 512, 0.8f, 0);
-                    if(rawImage != null){
-                        loginFinger = convertByteArrayString(rawImage);
-                    }
 
-            }catch (Exception ex) {
-
-                ex.printStackTrace();
-            }
-
-            if(!isNetworkconnected()){
-                if (capturedImage != null){
-                    if (mUsers.size() > 0){
-                        boolean isMatched = false;
-                        for(UserData userData : mUsers){
-                            if (mCurrentDevice.verify(capturedTemplate.data, capturedTemplate.data.length,
-                                    userData.template,userData.template.length)){
-
-                                isMatched = true;
-                            }
-                        }
-
-                        if(isMatched){
-                            Log.i(TAG__isMatch,"match is found");
-                        }
-                    }
-                }
-            }
             return true;
         }
 
@@ -125,7 +131,6 @@ public class Main2Activity extends AppCompatActivity {
 
         }
     };
-
 
 
 
@@ -175,26 +180,58 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        FrigerprintControl.frigerprint_power_on();
+       // FrigerprintControl.frigerprint_power_on();
         mainContext = this;
 
         mCaptureOptionDefault.frameRate = IBioMiniDevice.FrameRate.SHIGH;
 
-       Button button = findViewById(R.id.submit);
-       if(button != null) {
-           button.setOnClickListener(new View.OnClickListener() {
+        Button button_submit = findViewById(R.id.submit);
+
+        final ImageView imageView_captureFingerPrint = findViewById(R.id.fingerprint_icon);
+        imageView_captureFingerPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (imageView_captureFingerPrint != null){
+                    ((ImageView) findViewById(R.id.fingerprint_icon)).setImageBitmap(null);
+                    mCaptureOptionDefault.captureTemplate =true;
+                    if(mCurrentDevice != null) {
+                        //mCaptureOptionDefault.captureTimeout = (int)mCurrentDevice.getParameter(IBioMiniDevice.ParameterType.TIMEOUT).value;
+                        mCurrentDevice.captureSingle(
+                                mCaptureOptionDefault,
+                                mCaptureResponseDefault,
+                                true);
+                    }
+                }
+            }
+        });
+
+
+       if(button_submit != null) {
+           button_submit.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
-                 ((ImageView) findViewById(R.id.fingerprint_icon)).setImageBitmap(null);
-                        mCaptureOptionDefault.captureTemplate =true;
-                       if(mCurrentDevice != null) {
-                           //mCaptureOptionDefault.captureTimeout = (int)mCurrentDevice.getParameter(IBioMiniDevice.ParameterType.TIMEOUT).value;
-                           mCurrentDevice.captureSingle(
-                                   mCaptureOptionDefault,
-                                   mCaptureResponseDefault,
-                                   true);
+
+
+                   List<LearnerStructure> list = LearnerStructure.listAll(LearnerStructure.class);
+                   otpTextInputEditText = findViewById(R.id.otp_pin);
+                   if (otpTextInputEditText.getText().toString().equals("12345")) {
+                       if (list.size() == 0) {
+                           Intent intent = new Intent(getApplicationContext(), DemographicRegistrationActivity.class);
+                           startActivity(intent);
+                          }else {
+                           Toast.makeText(getApplicationContext(),"PLEASE USE FINGERPRINT SCANNER TO LOGIN",Toast.LENGTH_LONG).show();
                        }
+                   } else if (isMatched){
+                        Toast.makeText(getApplicationContext(),"MATCH FOUND",Toast.LENGTH_LONG).show();
+                       Intent intent = new Intent(getApplicationContext(), DemographicRegistrationActivity.class);
+                       startActivity(intent);
+                   }else {
+                       Toast.makeText(getApplicationContext(),"LOGIN NOT SUCCESSFULL ... PLEASE TRY AGAIN",Toast.LENGTH_LONG).show();
                    }
+
+
+               }
 
            });
 
@@ -202,9 +239,9 @@ public class Main2Activity extends AppCompatActivity {
         if(mBioMiniFactory != null) {
             mBioMiniFactory.close();
         }
+
         restartBioMini();
-        Intent intent = new Intent(this, DemographicRegistration.class);
-        startActivity(intent);
+
     }
 
 
@@ -269,16 +306,7 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
 
-    public String convertByteArrayString(byte[] array){
-       try{
 
-           return Base64.encodeToString(array,Base64.DEFAULT);
-
-       }catch (Exception ex){
-
-       }
-        return "";
-    }
 
     //check network status
     public boolean isNetworkconnected(){
@@ -286,4 +314,6 @@ public class Main2Activity extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         return  cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
+
+
 }
